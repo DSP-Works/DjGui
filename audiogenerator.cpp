@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cmath>
 
-constexpr double doublePi() { return std::atan(1) * 4 * 2; }
+constexpr float doublePi() { return std::atan(1) * 4 * 2; }
 
 void AudioGenerator::writeSamples(float *buffer, std::size_t frames)
 {

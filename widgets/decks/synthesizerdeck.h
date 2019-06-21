@@ -2,12 +2,14 @@
 
 #include <QWidget>
 
-#include "audiogenerator.h"
+#include "audiosource.h"
 
-class SynthesizerDeck : public QWidget, public AudioGenerator
+class SynthesizerDeck : public QWidget, public AudioSource
 {
     Q_OBJECT
 
 public:
     explicit SynthesizerDeck(QWidget *parent = nullptr);
+
+    void writeSamples(float *buffer, std::size_t frames) override;
 };
