@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
             slider->setOrientation(Qt::Horizontal);
             slider->setRange(0, 100);
             slider->setValue(100);
-            connect(slider, &QSlider::valueChanged, [](int value){});
+            connect(slider, &QSlider::valueChanged, this, [this](int value){ m_volumeController->setVolume(float(value) / 100.f); });
             hboxLayout->addWidget(slider);
         }
 
@@ -126,6 +126,7 @@ void MainWindow::play()
     if (m_output)
     {
         m_output = nullptr;
+        m_button->setText("Start");
     }
     else
     {
@@ -133,5 +134,6 @@ void MainWindow::play()
         m_output->setBufferSize(8192);
         m_output->start(m_device.get());
         m_output->setBufferSize(8192);
+        m_button->setText("Stop");
     }
 }
