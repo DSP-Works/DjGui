@@ -18,6 +18,7 @@
 #include "decks/trackdeck.h"
 #include "decks/remixdeck.h"
 #include "decks/synthesizerdeck.h"
+#include "browserwidget.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -99,7 +100,7 @@ MainWindow::MainWindow(QWidget *parent) :
         mainLayout->addLayout(gridLayout);
     }
 
-    mainLayout->addStretch(1);
+    mainLayout->addWidget(new BrowserWidget);
 
     {
         auto centralWidget = new QWidget;

@@ -11,6 +11,7 @@ SOURCES += main.cpp \
     audiosource.cpp \
     audiovolumecontrol.cpp \
     streamdevice.cpp \
+    widgets/browserwidget.cpp \
     widgets/decks/remixdeck.cpp \
     widgets/decks/synthesizerdeck.cpp \
     widgets/decks/trackdeck.cpp \
@@ -23,6 +24,7 @@ HEADERS += \
     audiosource.h \
     audiovolumecontrol.h \
     streamdevice.h \
+    widgets/browserwidget.h \
     widgets/decks/remixdeck.h \
     widgets/decks/synthesizerdeck.h \
     widgets/decks/trackdeck.h \
