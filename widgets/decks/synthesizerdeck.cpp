@@ -1,12 +1,13 @@
 #include "synthesizerdeck.h"
 
-#include <QHBoxLayout>
-#include <QSlider>
 #include <QLabel>
 
 SynthesizerDeck::SynthesizerDeck(QWidget *parent) :
     QWidget(parent)
 {
+    setMinimumHeight(100);
+
+    new QLabel(tr("SynthesizerDeck"), this);
 }
 
 void SynthesizerDeck::writeSamples(float *buffer, std::size_t frames)
