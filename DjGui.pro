@@ -10,6 +10,7 @@ SOURCES += main.cpp \
     audiomixer.cpp \
     audiosource.cpp \
     audiovolumecontrol.cpp \
+    databasemodel.cpp \
     streamdevice.cpp \
     widgets/browserwidget.cpp \
     widgets/decks/remixdeck.cpp \
@@ -23,6 +24,7 @@ HEADERS += \
     audiomixer.h \
     audiosource.h \
     audiovolumecontrol.h \
+    databasemodel.h \
     streamdevice.h \
     widgets/browserwidget.h \
     widgets/decks/remixdeck.h \
