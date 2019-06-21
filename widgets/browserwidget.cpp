@@ -8,6 +8,10 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QTreeView>
+#include <QFileSystemModel>
+#include <QStandardPaths>
+
+#include <QDebug>
 
 #include "databasemodel.h"
 
@@ -39,10 +43,32 @@ BrowserWidget::BrowserWidget(QWidget *parent) :
     }
 
     {
-        auto treeView = new QTreeView;
-        treeView->setModel(m_model.get());
-        layout->addWidget(treeView, 1);
+        auto hboxLayout = new QHBoxLayout;
+
+        {
+            auto treeView = new QTreeView;
+            auto model = new QFileSystemModel;
+            model->setRootPath("");
+            treeView->setModel(model);
+            for (int i = 1; i < model->columnCount(); ++i)
+                treeView->hideColumn(i);
+            {
+                const auto dirs = QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
+                if (!dirs.empty())
+                    treeView->setRootIndex(model->index(dirs.first()));
+            }
+            hboxLayout->addWidget(treeView, 1);
+        }
+
+        {
+            auto treeView = new QTreeView;
+            treeView->setModel(m_model.get());
+            hboxLayout->addWidget(treeView, 4);
+        }
+
+        layout->addLayout(hboxLayout, 1);
     }
+
 
     setLayout(layout);
 }
