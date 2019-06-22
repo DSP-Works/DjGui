@@ -14,6 +14,7 @@ SynthesizerDeck::SynthesizerDeck(QWidget *parent) :
     setMinimumHeight(100);
 
     auto layout = new QVBoxLayout;
+    layout->setMargin(0);
 
     layout->addWidget(new QLabel(tr("SynthesizerDeck")));
 

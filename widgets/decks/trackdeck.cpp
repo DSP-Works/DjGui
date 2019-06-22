@@ -24,6 +24,7 @@ TrackDeck::TrackDeck(QThread &decodingThread, QWidget *parent) :
     setMinimumHeight(150);
 
     auto layout = new QVBoxLayout;
+    layout->setMargin(0);
 
     {
         auto hboxLayout = new QHBoxLayout;

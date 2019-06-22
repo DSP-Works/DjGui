@@ -1,6 +1,10 @@
 #include "remixdeck.h"
 
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QLabel>
+#include <QGridLayout>
+#include <QToolButton>
 
 #include "audiomixer.h"
 
@@ -10,7 +14,35 @@ RemixDeck::RemixDeck(QWidget *parent) :
 {
     setMinimumHeight(100);
 
-    setCentralWidget(new QLabel(tr("RemixDeck")));
+    auto layout = new QVBoxLayout;
+    layout->setMargin(0);
+
+    {
+        auto hboxLayout = new QHBoxLayout;
+
+        hboxLayout->addWidget(new QLabel(tr("RemixDeck")));
+        hboxLayout->addStretch(1);
+
+        layout->addLayout(hboxLayout);
+    }
+
+    layout->addStretch(1);
+
+    {
+        auto gridLayout = new QGridLayout;
+
+        for (int y = 0; y < 4; y++)
+            for (int x = 0; x < 6; x++)
+                gridLayout->addWidget(new QToolButton, y, x);
+
+        layout->addLayout(gridLayout);
+    }
+
+    layout->addStretch(1);
+
+    auto widget = new QWidget;
+    widget->setLayout(layout);
+    setCentralWidget(widget);
 }
 
 RemixDeck::~RemixDeck() = default;
