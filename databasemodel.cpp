@@ -1,5 +1,8 @@
 #include "databasemodel.h"
 
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QMessageBox>
 #include <QDirIterator>
 
 #include <QDebug>
@@ -27,6 +30,26 @@ DatabaseModel::DatabaseModel(QSqlDatabase &db, QObject *parent) :
     QAbstractListModel(parent),
     m_db(db)
 {
+    QSqlQuery query("CREATE TABLE IF NOT EXISTS `Tracks` ("
+                    "`ID` INTEGER PRIMARY KEY NOT NULL, "
+                    "`Filename` TEXT NOT NULL UNIQUE, "
+                    "`Title` TEXT, "
+                    "`Artist` TEXT, "
+                    "`Album` TEXT, "
+                    "`Comment` TEXT, "
+                    "`Genre` TEXT, "
+                    "`Year` INT, "
+                    "`Track` INT, "
+                    "`LengthInMilliseconds` INT, "
+                    "`Bitrate` INT, "
+                    "`SampleRate` INT, "
+                    "`Channels` INT"
+                    ");", m_db);
+    if (query.lastError().isValid())
+    {
+        QMessageBox::warning(nullptr, tr("Could not setup database!"), tr("Could not setup database!") + "\n\n" + query.lastError().text());
+        return;
+    }
 }
 
 void DatabaseModel::import(const QString &path)

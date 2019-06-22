@@ -17,12 +17,17 @@
 
 BrowserWidget::BrowserWidget(QWidget *parent) :
     QWidget(parent),
-    m_db(std::make_unique<QSqlDatabase>(QSqlDatabase::addDatabase("QSQLITE"))),
+    m_db(std::make_unique<QSqlDatabase>([](){
+        auto db = QSqlDatabase::addDatabase("QSQLITE");
+
+        db.setDatabaseName("database.db");
+        if (!db.open())
+            QMessageBox::critical(nullptr, tr("Could not open database!"), tr("Could not open database!") + "\n\n" + db.lastError().text());
+
+        return db;
+    }())),
     m_model(std::make_unique<DatabaseModel>(*m_db))
 {
-    m_db->setDatabaseName("database.db");
-    if (!m_db->open())
-        QMessageBox::critical(this, tr("Could not open database!"), tr("Could not open database!") + "\n\n" + m_db->lastError().text());
 
     auto layout = new QVBoxLayout;
 
