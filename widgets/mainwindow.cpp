@@ -8,7 +8,6 @@
 #include <QPushButton>
 #include <QGridLayout>
 #include <QWidget>
-#include <QDebug>
 #include <QAudioOutput>
 
 #include "audiomixer.h"

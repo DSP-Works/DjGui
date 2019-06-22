@@ -3,11 +3,11 @@
 #include <QLabel>
 
 RemixDeck::RemixDeck(QWidget *parent) :
-    QWidget(parent)
+    DeckTemplate(parent)
 {
     setMinimumHeight(100);
 
-    new QLabel(tr("RemixDeck"), this);
+    setCentralWidget(new QLabel(tr("RemixDeck")));
 }
 
 void RemixDeck::writeSamples(float *buffer, std::size_t frames)

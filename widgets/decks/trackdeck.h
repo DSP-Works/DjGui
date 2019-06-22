@@ -1,12 +1,11 @@
 #pragma once
 
-#include <QWidget>
-
+#include "widgets/decktemplate.h"
 #include "audiosource.h"
 
 class QLabel;
 
-class TrackDeck : public QWidget, public AudioSource
+class TrackDeck : public DeckTemplate, public AudioSource
 {
     Q_OBJECT
 
@@ -19,7 +18,4 @@ protected:
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dragLeaveEvent(QDragLeaveEvent *event) override;
     void dropEvent(QDropEvent *event) override;
-
-private:
-    QLabel *m_label;
 };

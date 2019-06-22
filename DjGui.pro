@@ -13,9 +13,11 @@ SOURCES += main.cpp \
     databasemodel.cpp \
     streamdevice.cpp \
     widgets/browserwidget.cpp \
+    widgets/controlknob.cpp \
     widgets/decks/remixdeck.cpp \
     widgets/decks/synthesizerdeck.cpp \
     widgets/decks/trackdeck.cpp \
+    widgets/decktemplate.cpp \
     widgets/mainwindow.cpp
 
 HEADERS += \
@@ -27,7 +29,9 @@ HEADERS += \
     databasemodel.h \
     streamdevice.h \
     widgets/browserwidget.h \
+    widgets/controlknob.h \
     widgets/decks/remixdeck.h \
     widgets/decks/synthesizerdeck.h \
     widgets/decks/trackdeck.h \
+    widgets/decktemplate.h \
     widgets/mainwindow.h

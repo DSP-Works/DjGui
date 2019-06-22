@@ -3,11 +3,11 @@
 #include <QLabel>
 
 SynthesizerDeck::SynthesizerDeck(QWidget *parent) :
-    QWidget(parent)
+    DeckTemplate(parent)
 {
     setMinimumHeight(100);
 
-    new QLabel(tr("SynthesizerDeck"), this);
+    setCentralWidget(new QLabel(tr("SynthesizerDeck")));
 }
 
 void SynthesizerDeck::writeSamples(float *buffer, std::size_t frames)

@@ -1,10 +1,9 @@
 #pragma once
 
-#include <QWidget>
-
+#include "widgets/decktemplate.h"
 #include "audiosource.h"
 
-class RemixDeck : public QWidget, public AudioSource
+class RemixDeck : public DeckTemplate, public AudioSource
 {
     Q_OBJECT
 
