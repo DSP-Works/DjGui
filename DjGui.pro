@@ -4,6 +4,8 @@ CONFIG += c++17
 
 DEFINES += QT_DEPRECATED_WARNINGS QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
+LIBS += -ltag
+
 SOURCES += main.cpp \
     audiocrossmixer.cpp \
     audiodecoder.cpp \

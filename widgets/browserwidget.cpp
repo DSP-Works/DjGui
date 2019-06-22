@@ -10,13 +10,15 @@
 #include <QTreeView>
 #include <QFileSystemModel>
 #include <QStandardPaths>
+#include <QMenu>
+#include <QAction>
 
 #include "databasemodel.h"
 
 BrowserWidget::BrowserWidget(QWidget *parent) :
     QWidget(parent),
     m_db(std::make_unique<QSqlDatabase>(QSqlDatabase::addDatabase("QSQLITE"))),
-    m_model(std::make_unique<DatabaseModel>())
+    m_model(std::make_unique<DatabaseModel>(*m_db))
 {
     m_db->setDatabaseName("database.db");
     if (!m_db->open())
@@ -44,27 +46,27 @@ BrowserWidget::BrowserWidget(QWidget *parent) :
         auto hboxLayout = new QHBoxLayout;
 
         {
-            auto treeView = new QTreeView;
-            treeView->setDragEnabled(true);
+            m_treeView = new QTreeView;
+            m_treeView->setContextMenuPolicy(Qt::CustomContextMenu);
+            connect(m_treeView, &QWidget::customContextMenuRequested, this, &BrowserWidget::customContextMenuRequested);
 
-            auto model = new QFileSystemModel;
-            model->setRootPath("");
-            treeView->setModel(model);
-            for (int i = 1; i < model->columnCount(); ++i)
-                treeView->hideColumn(i);
+            m_treeModel = std::make_unique<QFileSystemModel>();
+            m_treeModel->setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
+            m_treeModel->setRootPath("");
+            m_treeView->setModel(m_treeModel.get());
+            for (int i = 1; i < m_treeModel->columnCount(); ++i)
+                m_treeView->hideColumn(i);
             {
                 const auto dirs = QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
                 if (!dirs.empty())
-                    treeView->setRootIndex(model->index(dirs.first()));
+                    m_treeView->setRootIndex(m_treeModel->index(dirs.first()));
             }
-            hboxLayout->addWidget(treeView, 1);
+            hboxLayout->addWidget(m_treeView, 1);
         }
 
-        {
-            auto treeView = new QTreeView;
-            treeView->setModel(m_model.get());
-            hboxLayout->addWidget(treeView, 4);
-        }
+        m_listView = new QTreeView;
+        m_listView->setModel(m_model.get());
+        hboxLayout->addWidget(m_listView, 4);
 
         layout->addLayout(hboxLayout, 1);
     }
@@ -74,3 +76,21 @@ BrowserWidget::BrowserWidget(QWidget *parent) :
 }
 
 BrowserWidget::~BrowserWidget() = default;
+
+void BrowserWidget::customContextMenuRequested(const QPoint &pos)
+{
+    const auto index = m_treeView->indexAt(pos);
+    if (!index.isValid())
+        return;
+
+    const auto path = m_treeModel->filePath(index);
+    if (path.isEmpty())
+        return;
+
+    QMenu menu;
+    const auto importAction = menu.addAction(tr("Import folder to collection"));
+    const auto selectedAction = menu.exec(m_treeView->viewport()->mapToGlobal(pos));
+
+    if (selectedAction == importAction)
+        m_model->import(path);
+}
