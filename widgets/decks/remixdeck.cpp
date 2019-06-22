@@ -29,13 +29,20 @@ RemixDeck::RemixDeck(QWidget *parent) :
     layout->addStretch(1);
 
     {
-        auto gridLayout = new QGridLayout;
+        auto hboxLayout = new QHBoxLayout;
 
-        for (int y = 0; y < 4; y++)
-            for (int x = 0; x < 6; x++)
-                gridLayout->addWidget(new QToolButton, y, x);
+        for (int i = 0; i < 2; i++)
+        {
+            auto gridLayout = new QGridLayout;
 
-        layout->addLayout(gridLayout);
+            for (int y = 0; y < 4; y++)
+                for (int x = 0; x < 3; x++)
+                    gridLayout->addWidget(new QToolButton, y, x);
+
+            hboxLayout->addLayout(gridLayout);
+        }
+
+        layout->addLayout(hboxLayout);
     }
 
     layout->addStretch(1);
