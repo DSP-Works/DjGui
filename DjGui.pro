@@ -6,6 +6,10 @@ DEFINES += QT_DEPRECATED_WARNINGS QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
 LIBS += -ltag
 
+release: QMAKE_CXXFLAGS_RELEASE -= -O1
+release: QMAKE_CXXFLAGS_RELEASE -= -O2
+release: QMAKE_CXXFLAGS_RELEASE += -O3 -DNDEBUG -ffast-math -march=native -mtune=native
+
 SOURCES += main.cpp \
     audiocrossmixer.cpp \
     audiodecoder.cpp \

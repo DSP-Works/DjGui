@@ -12,7 +12,8 @@
 
 DeckTemplate::DeckTemplate(bool rightSide, QWidget *parent) :
     QFrame(parent),
-    m_volumeController(std::make_unique<AudioVolumeControl>())
+    m_volumeController(std::make_unique<AudioVolumeControl>()),
+    m_panController(std::make_unique<AudioVolumeControl>(m_volumeController.get()))
 {
     setFrameShape(QFrame::Box);
 
@@ -83,7 +84,19 @@ DeckTemplate::DeckTemplate(bool rightSide, QWidget *parent) :
         firstControlsLayout->addLayout(hboxLayuot);
     }
 
-    m_panDial = new ControlKnob(tr("Pan"), 0, 100, 50);
+    m_panDial = new ControlKnob(tr("Pan"), -100, 100, 0);
+    connect(m_panDial, &ControlKnob::valueChanged, this, [&controller=*m_panController](int value){
+        const auto scaledValue = float(value) / 100.f;
+
+        std::vector<float> volumes;
+
+        if (scaledValue < 0.f)
+            volumes = { 1.f, 1.f + scaledValue };
+        else
+            volumes = { 1.f - scaledValue, 1.f };
+
+        controller.setVolumes(volumes);
+    });
     connect(m_panDial, &ControlKnob::valueChanged, this, &DeckTemplate::panChanged);
     firstControlsLayout->addWidget(m_panDial);
 
@@ -148,7 +161,7 @@ void DeckTemplate::writeSamples(float *buffer, std::size_t frames)
     auto &source = deckAudioSource();
     if (m_volumeController->audioSource() != &source)
         m_volumeController->setAudioSource(&source);
-    m_volumeController->writeSamples(buffer, frames);
+    m_panController->writeSamples(buffer, frames);
 }
 
 int DeckTemplate::gain() const

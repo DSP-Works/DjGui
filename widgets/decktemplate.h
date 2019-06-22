@@ -92,4 +92,5 @@ private:
     QSlider *m_volumeSlider;
 
     const std::unique_ptr<AudioVolumeControl> m_volumeController;
+    const std::unique_ptr<AudioVolumeControl> m_panController;
 };
