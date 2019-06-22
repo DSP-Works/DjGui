@@ -10,8 +10,10 @@
 #include "controlknob.h"
 
 DeckTemplate::DeckTemplate(QWidget *parent) :
-    QWidget(parent)
+    QFrame(parent)
 {
+    setFrameShape(QFrame::Box);
+
     m_layout = new QHBoxLayout;
 
     m_centralWidget = new QWidget;
@@ -30,23 +32,31 @@ DeckTemplate::DeckTemplate(QWidget *parent) :
         vboxLayout->addWidget(m_filterDial);
 
         {
-            auto hboxLayuot = new QHBoxLayout;
+            auto fxLayout = new QVBoxLayout;
+            fxLayout->setMargin(0);
+            fxLayout->setSpacing(0);
 
-            m_fx1Button = new QToolButton;
-            m_fx1Button->setText(tr("1"));
-            hboxLayuot->addWidget(m_fx1Button);
+            {
+                auto hboxLayuot = new QHBoxLayout;
 
-            m_fx2Button = new QToolButton;
-            m_fx2Button->setText(tr("2"));
-            hboxLayuot->addWidget(m_fx2Button);
+                m_fx1Button = new QToolButton;
+                m_fx1Button->setText(tr("1"));
+                hboxLayuot->addWidget(m_fx1Button);
 
-            vboxLayout->addLayout(hboxLayuot);
-        }
+                m_fx2Button = new QToolButton;
+                m_fx2Button->setText(tr("2"));
+                hboxLayuot->addWidget(m_fx2Button);
 
-        {
-            auto label = new QLabel(tr("FX"));
-            label->setAlignment(Qt::AlignCenter);
-            vboxLayout->addWidget(label);
+                fxLayout->addLayout(hboxLayuot);
+            }
+
+            {
+                auto label = new QLabel(tr("FX"));
+                label->setAlignment(Qt::AlignCenter);
+                fxLayout->addWidget(label);
+            }
+
+            vboxLayout->addLayout(fxLayout);
         }
 
         m_keyDial = new ControlKnob;

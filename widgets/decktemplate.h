@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QWidget>
+#include <QFrame>
 
 class QHBoxLayout;
 class QWidget;
@@ -9,7 +9,7 @@ class QSlider;
 
 class ControlKnob;
 
-class DeckTemplate : public QWidget
+class DeckTemplate : public QFrame
 {
     Q_OBJECT
 
