@@ -3,6 +3,7 @@
 #include "audiosource.h"
 
 #include <vector>
+#include <memory>
 
 class AudioMixer : public AudioSource
 {
@@ -25,4 +26,7 @@ public:
 
 private:
     std::vector<AudioSource*> m_inputs;
+
+    std::unique_ptr<float[]> m_tempBuffer;
+    std::size_t m_tempBufferSize;
 };

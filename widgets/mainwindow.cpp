@@ -11,7 +11,7 @@
 #include <QWidget>
 #include <QAudioOutput>
 
-#include "audiomixer.h"
+#include "audiocrossmixer.h"
 #include "streamdevice.h"
 #include "decks/trackdeck.h"
 #include "decks/remixdeck.h"
@@ -20,7 +20,7 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    m_mixer(std::make_unique<AudioMixer>()),
+    m_mixer(std::make_unique<AudioCrossMixer>()),
     m_device(std::make_unique<StreamDevice>(m_mixer.get()))
 {
     auto mainLayout = new QVBoxLayout;
@@ -75,32 +75,48 @@ MainWindow::MainWindow(QWidget *parent) :
 
         {
             auto trackDeck = new TrackDeck(m_decodingThread);
-            m_mixer->addInput(*trackDeck);
+            m_mixer->addLeftInput(*trackDeck);
             gridLayout->addWidget(trackDeck, 0, 0);
         }
 
         {
             auto trackDeck = new TrackDeck(m_decodingThread);
-            m_mixer->addInput(*trackDeck);
+            m_mixer->addRightInput(*trackDeck);
             gridLayout->addWidget(trackDeck, 0, 1);
         }
 
         {
             auto remixDeck = new RemixDeck;
-            m_mixer->addInput(*remixDeck);
+            m_mixer->addLeftInput(*remixDeck);
             gridLayout->addWidget(remixDeck, 1, 0);
         }
 
         {
             auto synthesizerDeck = new SynthesizerDeck;
-            m_mixer->addInput(*synthesizerDeck);
+            m_mixer->addRightInput(*synthesizerDeck);
             gridLayout->addWidget(synthesizerDeck, 1, 1);
         }
 
         mainLayout->addLayout(gridLayout);
     }
 
-    mainLayout->addWidget(new BrowserWidget);
+    {
+        auto hboxLayout = new QHBoxLayout;
+
+        hboxLayout->addStretch();
+
+        auto slider = new QSlider(Qt::Horizontal);
+        slider->setFixedWidth(200);
+        slider->setRange(-100, 100);
+        connect(slider, &QSlider::valueChanged, [&mixer=*m_mixer](int value){ mixer.setPosition(float(value) / 100.f); });
+        hboxLayout->addWidget(slider);
+
+        hboxLayout->addStretch();
+
+        mainLayout->addLayout(hboxLayout);
+    }
+
+    mainLayout->addWidget(new BrowserWidget, 1);
 
     {
         auto centralWidget = new QWidget;

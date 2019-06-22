@@ -27,7 +27,7 @@ void AudioPlayer::writeSamples(float *buffer, std::size_t frames)
         const std::size_t right = std::ceil(m_position);
         const float factor = m_position - left;
 
-        m_position+=m_playbackSpeed;
+        m_position += m_playbackSpeed;
 
         const auto leftSample = m_buffer.constData<float>()[left];
         const auto rightSample = m_buffer.constData<float>()[right];

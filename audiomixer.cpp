@@ -35,15 +35,19 @@ void AudioMixer::removeInput(AudioSource &source)
 
 void AudioMixer::writeSamples(float *buffer, std::size_t frames)
 {
-    const auto tempBuffer = std::make_unique<float[]>(frames);
+    if (frames != m_tempBufferSize)
+    {
+        m_tempBuffer = std::make_unique<float[]>(frames);
+        m_tempBufferSize = frames;
+    }
 
     std::fill(buffer, buffer + frames, 0.f);
 
     for (AudioSource *audioSource : m_inputs)
     {
-        audioSource->writeSamples(tempBuffer.get(), frames);
+        audioSource->writeSamples(m_tempBuffer.get(), frames);
 
-        std::transform(tempBuffer.get(), tempBuffer.get() + frames,
+        std::transform(m_tempBuffer.get(), m_tempBuffer.get() + frames,
                        buffer,
                        buffer,
                        [](float a, float b){ return a+b; });
