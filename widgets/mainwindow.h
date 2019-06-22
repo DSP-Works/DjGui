@@ -3,6 +3,7 @@
 #include <QMainWindow>
 #include <QList>
 #include <QAudioDeviceInfo>
+#include <QThread>
 
 #include <memory>
 
@@ -38,4 +39,6 @@ private:
     QList<QAudioDeviceInfo> m_audioDevices;
 
     QPushButton *m_button;
+
+    QThread m_decodingThread;
 };

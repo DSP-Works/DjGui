@@ -3,6 +3,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QProgressBar>
 #include <QToolButton>
 #include <QDragEnterEvent>
 #include <QMimeData>
@@ -11,8 +12,11 @@
 #include <QTextStream>
 #include <QDebug>
 
-TrackDeck::TrackDeck(QWidget *parent) :
-    DeckTemplate(parent)
+#include "audiodecoder.h"
+
+TrackDeck::TrackDeck(QThread &decodingThread, QWidget *parent) :
+    DeckTemplate(parent),
+    m_decodingThread(decodingThread)
 {
     setAcceptDrops(true);
     setMinimumHeight(150);
@@ -23,6 +27,12 @@ TrackDeck::TrackDeck(QWidget *parent) :
         auto hboxLayout = new QHBoxLayout;
 
         hboxLayout->addWidget(new QLabel(tr("TrackDeck")));
+
+        hboxLayout->addStretch(1);
+
+        m_progressBar = new QProgressBar;
+        m_progressBar->setVisible(false);
+        hboxLayout->addWidget(m_progressBar);
 
         hboxLayout->addStretch(1);
 
@@ -48,6 +58,8 @@ TrackDeck::TrackDeck(QWidget *parent) :
     widget->setLayout(layout);
     setCentralWidget(widget);
 }
+
+TrackDeck::~TrackDeck() = default;
 
 AudioSource &TrackDeck::deckAudioSource()
 {
@@ -120,4 +132,26 @@ void TrackDeck::dropEvent(QDropEvent *event)
         qWarning() << "isnt file";
         return;
     }
+
+    m_progressBar->setValue(0);
+    m_progressBar->setVisible(true);
+
+    m_decoder = std::make_unique<AudioDecoder>(AudioSource::format());
+    m_decoder->moveToThread(&m_decodingThread);
+    connect(m_decoder.get(), &AudioDecoder::progress, this, &TrackDeck::progress);
+    connect(m_decoder.get(), &AudioDecoder::decodingFinished, this, &TrackDeck::decodingFinished);
+    QMetaObject::invokeMethod(m_decoder.get(), "start", Qt::AutoConnection, Q_ARG(QString, fileInfo.absoluteFilePath()));
+}
+
+void TrackDeck::progress(int progress, int total)
+{
+    m_progressBar->setMaximum(total);
+    m_progressBar->setValue(progress);
+}
+
+void TrackDeck::decodingFinished()
+{
+    m_decoder = nullptr;
+
+    m_progressBar->setVisible(false);
 }

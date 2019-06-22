@@ -5,6 +5,7 @@ CONFIG += c++17
 DEFINES += QT_DEPRECATED_WARNINGS QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
 SOURCES += main.cpp \
+    audiodecoder.cpp \
     audiogenerator.cpp \
     audiolimiter.cpp \
     audiomixer.cpp \
@@ -21,6 +22,7 @@ SOURCES += main.cpp \
     widgets/mainwindow.cpp
 
 HEADERS += \
+    audiodecoder.h \
     audiogenerator.h \
     audiolimiter.h \
     audiomixer.h \

@@ -72,13 +72,13 @@ MainWindow::MainWindow(QWidget *parent) :
         auto gridLayout = new QGridLayout;
 
         {
-            auto trackDeck = new TrackDeck;
+            auto trackDeck = new TrackDeck(m_decodingThread);
             m_mixer->addInput(*trackDeck);
             gridLayout->addWidget(trackDeck, 0, 0);
         }
 
         {
-            auto trackDeck = new TrackDeck;
+            auto trackDeck = new TrackDeck(m_decodingThread);
             m_mixer->addInput(*trackDeck);
             gridLayout->addWidget(trackDeck, 0, 1);
         }
@@ -105,9 +105,15 @@ MainWindow::MainWindow(QWidget *parent) :
         centralWidget->setLayout(mainLayout);
         setCentralWidget(centralWidget);
     }
+
+    m_decodingThread.start();
 }
 
-MainWindow::~MainWindow() = default;
+MainWindow::~MainWindow()
+{
+    m_decodingThread.exit();
+    m_decodingThread.wait();
+}
 
 void MainWindow::refreshAudioDevices()
 {
