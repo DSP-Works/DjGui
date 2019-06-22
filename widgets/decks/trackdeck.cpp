@@ -49,9 +49,9 @@ TrackDeck::TrackDeck(QWidget *parent) :
     setCentralWidget(widget);
 }
 
-void TrackDeck::writeSamples(float *buffer, std::size_t frames)
+AudioSource &TrackDeck::deckAudioSource()
 {
-    std::fill(buffer, buffer + frames, 0.f);
+
 }
 
 void TrackDeck::dragEnterEvent(QDragEnterEvent *event)

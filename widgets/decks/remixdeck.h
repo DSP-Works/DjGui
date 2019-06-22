@@ -1,14 +1,22 @@
 #pragma once
 
-#include "widgets/decktemplate.h"
-#include "audiosource.h"
+#include <memory>
 
-class RemixDeck : public DeckTemplate, public AudioSource
+#include "widgets/decktemplate.h"
+
+class AudioMixer;
+
+class RemixDeck : public DeckTemplate
 {
     Q_OBJECT
 
 public:
     explicit RemixDeck(QWidget *parent = nullptr);
+    ~RemixDeck() override;
 
-    void writeSamples(float *buffer, std::size_t frames) override;
+protected:
+    AudioSource &deckAudioSource() override;
+
+private:
+    const std::unique_ptr<AudioMixer> m_mixer;
 };

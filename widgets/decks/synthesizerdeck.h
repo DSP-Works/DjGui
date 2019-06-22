@@ -1,14 +1,29 @@
 #pragma once
 
-#include "widgets/decktemplate.h"
-#include "audiosource.h"
+#include <memory>
 
-class SynthesizerDeck : public DeckTemplate, public AudioSource
+#include "widgets/decktemplate.h"
+
+class QPushButton;
+
+class AudioGenerator;
+
+class SynthesizerDeck : public DeckTemplate
 {
     Q_OBJECT
 
 public:
     explicit SynthesizerDeck(QWidget *parent = nullptr);
+    ~SynthesizerDeck() override;
 
-    void writeSamples(float *buffer, std::size_t frames) override;
+protected:
+    AudioSource &deckAudioSource() override;
+
+private slots:
+    void pressed();
+
+private:
+    const std::unique_ptr<AudioGenerator> m_generator;
+
+    QPushButton *m_button;
 };

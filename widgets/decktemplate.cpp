@@ -7,10 +7,12 @@
 #include <QLabel>
 #include <QSlider>
 
+#include "audiovolumecontrol.h"
 #include "controlknob.h"
 
 DeckTemplate::DeckTemplate(QWidget *parent) :
-    QFrame(parent)
+    QFrame(parent),
+    m_volumeController(std::make_unique<AudioVolumeControl>())
 {
     setFrameShape(QFrame::Box);
 
@@ -105,8 +107,10 @@ DeckTemplate::DeckTemplate(QWidget *parent) :
 
             hboxLayout->addStretch();
 
-            m_volumeSlider = new QSlider;
-            m_volumeSlider->setOrientation(Qt::Vertical);
+            m_volumeSlider = new QSlider(Qt::Vertical);
+            m_volumeSlider->setRange(0, 100);
+            m_volumeSlider->setValue(100);
+            connect(m_volumeSlider, &QSlider::valueChanged, this, [&controller=*m_volumeController](int value){ controller.setVolume(float(value) / 100.f); });
             hboxLayout->addWidget(m_volumeSlider);
 
             hboxLayout->addStretch();
@@ -118,6 +122,16 @@ DeckTemplate::DeckTemplate(QWidget *parent) :
     }
 
     setLayout(m_layout);
+}
+
+DeckTemplate::~DeckTemplate() = default;
+
+void DeckTemplate::writeSamples(float *buffer, std::size_t frames)
+{
+    auto &source = deckAudioSource();
+    if (m_volumeController->audioSource() != &source)
+        m_volumeController->setAudioSource(&source);
+    m_volumeController->writeSamples(buffer, frames);
 }
 
 void DeckTemplate::setCentralWidget(QWidget *widget)

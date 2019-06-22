@@ -40,13 +40,12 @@ MainWindow::MainWindow(QWidget *parent) :
         hboxLayout->addStretch(1);
 
         {
-            auto slider = new QSlider;
+            auto slider = new QSlider(Qt::Horizontal);
 
             auto label = new QLabel(tr("Master"));
             label->setBuddy(slider);
             hboxLayout->addWidget(label);
 
-            slider->setOrientation(Qt::Horizontal);
             slider->setRange(0, 100);
             slider->setValue(100);
             connect(slider, &QSlider::valueChanged, this, [this](int value){ m_volumeController->setVolume(float(value) / 100.f); });
@@ -130,7 +129,6 @@ void MainWindow::play()
     else
     {
         m_output = std::make_unique<QAudioOutput>(m_audioDevices.at(m_combobox->currentIndex()), AudioSource::format());
-        m_output->setBufferSize(8192);
         m_output->start(m_device.get());
         m_output->setBufferSize(8192);
         m_button->setText("Stop");

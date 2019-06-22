@@ -2,15 +2,20 @@
 
 #include <QLabel>
 
+#include "audiomixer.h"
+
 RemixDeck::RemixDeck(QWidget *parent) :
-    DeckTemplate(parent)
+    DeckTemplate(parent),
+    m_mixer(std::make_unique<AudioMixer>())
 {
     setMinimumHeight(100);
 
     setCentralWidget(new QLabel(tr("RemixDeck")));
 }
 
-void RemixDeck::writeSamples(float *buffer, std::size_t frames)
+RemixDeck::~RemixDeck() = default;
+
+AudioSource &RemixDeck::deckAudioSource()
 {
-    std::fill(buffer, buffer + frames, 0.f);
+    return *m_mixer;
 }
