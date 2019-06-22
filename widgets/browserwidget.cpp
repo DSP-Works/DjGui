@@ -70,6 +70,7 @@ BrowserWidget::BrowserWidget(QWidget *parent) :
         }
 
         m_listView = new QTreeView;
+        m_listView->setDragEnabled(true);
         m_listView->setModel(m_model.get());
         hboxLayout->addWidget(m_listView, 4);
 
