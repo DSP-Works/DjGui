@@ -43,10 +43,12 @@ DeckTemplate::DeckTemplate(QWidget *parent) :
 
                 m_fx1Button = new QToolButton;
                 m_fx1Button->setText(tr("1"));
+                m_fx1Button->setCheckable(true);
                 hboxLayuot->addWidget(m_fx1Button);
 
                 m_fx2Button = new QToolButton;
                 m_fx2Button->setText(tr("2"));
+                m_fx2Button->setCheckable(true);
                 hboxLayuot->addWidget(m_fx2Button);
 
                 fxLayout->addLayout(hboxLayuot);

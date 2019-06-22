@@ -5,14 +5,13 @@
 #include <QLabel>
 #include <QSlider>
 #include <QComboBox>
+#include <QSpinBox>
 #include <QPushButton>
 #include <QGridLayout>
 #include <QWidget>
 #include <QAudioOutput>
 
 #include "audiomixer.h"
-#include "audiovolumecontrol.h"
-#include "audiolimiter.h"
 #include "streamdevice.h"
 #include "decks/trackdeck.h"
 #include "decks/remixdeck.h"
@@ -22,9 +21,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     m_mixer(std::make_unique<AudioMixer>()),
-    m_volumeController(std::make_unique<AudioVolumeControl>(m_mixer.get())),
-    m_limiter(std::make_unique<AudioLimiter>(m_volumeController.get())),
-    m_device(std::make_unique<StreamDevice>(m_limiter.get()))
+    m_device(std::make_unique<StreamDevice>(m_mixer.get()))
 {
     auto mainLayout = new QVBoxLayout;
     mainLayout->setMargin(0);
@@ -48,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
             slider->setRange(0, 100);
             slider->setValue(100);
-            connect(slider, &QSlider::valueChanged, this, [this](int value){ m_volumeController->setVolume(float(value) / 100.f); });
+            connect(slider, &QSlider::valueChanged, this, [&output=m_output](int value){ if (output) output->setVolume(float(value) / 100.f); });
             hboxLayout->addWidget(slider);
         }
 
@@ -58,6 +55,11 @@ MainWindow::MainWindow(QWidget *parent) :
             m_combobox = new QComboBox;
             refreshAudioDevices();
             hboxLayout->addWidget(m_combobox);
+
+            m_spinBox = new QSpinBox;
+            m_spinBox->setRange(0, std::numeric_limits<int>::max());
+            m_spinBox->setValue(1024);
+            hboxLayout->addWidget(m_spinBox);
 
             m_button = new QPushButton;
             connect(m_button, &QAbstractButton::pressed, this, &MainWindow::play);
@@ -131,12 +133,19 @@ void MainWindow::play()
     {
         m_output = nullptr;
         m_button->setText("Start");
+        m_combobox->setEnabled(true);
+        m_spinBox->setEnabled(true);
     }
     else
     {
+        const auto bufferSize = m_spinBox->value() * 4 * AudioSource::channelCount();
         m_output = std::make_unique<QAudioOutput>(m_audioDevices.at(m_combobox->currentIndex()), AudioSource::format());
+        m_output->setBufferSize(bufferSize);
         m_output->start(m_device.get());
-        m_output->setBufferSize(8192);
+        m_output->setBufferSize(bufferSize);
+        m_spinBox->setValue(m_output->bufferSize() / 4 / AudioSource::channelCount());
         m_button->setText("Stop");
+        m_combobox->setEnabled(false);
+        m_spinBox->setEnabled(false);
     }
 }

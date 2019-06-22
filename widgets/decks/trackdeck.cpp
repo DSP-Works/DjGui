@@ -4,6 +4,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QProgressBar>
+#include <QSlider>
 #include <QToolButton>
 #include <QDragEnterEvent>
 #include <QMimeData>
@@ -13,6 +14,7 @@
 #include <QDebug>
 
 #include "audiodecoder.h"
+#include "audioplayer.h"
 
 TrackDeck::TrackDeck(QThread &decodingThread, QWidget *parent) :
     DeckTemplate(parent),
@@ -33,6 +35,15 @@ TrackDeck::TrackDeck(QThread &decodingThread, QWidget *parent) :
         m_progressBar = new QProgressBar;
         m_progressBar->setVisible(false);
         hboxLayout->addWidget(m_progressBar);
+
+        hboxLayout->addStretch(1);
+
+        m_slider = new QSlider(Qt::Horizontal);
+        m_slider->setRange(90, 110);
+        m_slider->setValue(100);
+        m_slider->setVisible(false);
+        connect(m_slider, &QSlider::valueChanged, [&player=m_player](int value){ player.setPlaybackSpeed(float(value) / 100.f); });
+        hboxLayout->addWidget(m_slider);
 
         hboxLayout->addStretch(1);
 
@@ -63,7 +74,7 @@ TrackDeck::~TrackDeck() = default;
 
 AudioSource &TrackDeck::deckAudioSource()
 {
-
+    return m_player;
 }
 
 void TrackDeck::dragEnterEvent(QDragEnterEvent *event)
@@ -151,6 +162,12 @@ void TrackDeck::progress(int progress, int total)
 
 void TrackDeck::decodingFinished()
 {
+    m_player.setAudioBuffer(m_decoder->takeBuffer());
+    m_player.setPlaying(true);
+
+    m_slider->setVisible(true);
+    m_slider->setValue(100);
+
     m_decoder = nullptr;
 
     m_progressBar->setVisible(false);

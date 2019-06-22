@@ -9,6 +9,7 @@ SOURCES += main.cpp \
     audiogenerator.cpp \
     audiolimiter.cpp \
     audiomixer.cpp \
+    audioplayer.cpp \
     audiosource.cpp \
     audiovolumecontrol.cpp \
     databasemodel.cpp \
@@ -26,6 +27,7 @@ HEADERS += \
     audiogenerator.h \
     audiolimiter.h \
     audiomixer.h \
+    audioplayer.h \
     audiosource.h \
     audiovolumecontrol.h \
     databasemodel.h \

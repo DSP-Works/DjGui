@@ -9,6 +9,7 @@
 
 class QAudioOutput;
 class QComboBox;
+class QSpinBox;
 class QPushButton;
 
 class AudioMixer;
@@ -31,13 +32,11 @@ private slots:
 private:
     std::unique_ptr<QAudioOutput> m_output;
     const std::unique_ptr<AudioMixer> m_mixer;
-    const std::unique_ptr<AudioVolumeControl> m_volumeController;
-    const std::unique_ptr<AudioLimiter> m_limiter;
     const std::unique_ptr<StreamDevice> m_device;
 
     QComboBox *m_combobox;
     QList<QAudioDeviceInfo> m_audioDevices;
-
+    QSpinBox *m_spinBox;
     QPushButton *m_button;
 
     QThread m_decodingThread;

@@ -1,8 +1,11 @@
 #pragma once
 
+#include <QAudioBuffer>
+
 #include <memory>
 
 #include "widgets/decktemplate.h"
+#include "audioplayer.h"
 
 class QThread;
 class QProgressBar;
@@ -31,5 +34,9 @@ private slots:
 private:
     QThread &m_decodingThread;
     QProgressBar *m_progressBar;
+    QSlider *m_slider;
     std::unique_ptr<AudioDecoder> m_decoder;
+    AudioPlayer m_player;;
+
+    QAudioBuffer m_buffer;
 };

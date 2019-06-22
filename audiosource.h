@@ -8,6 +8,8 @@
 class AudioSource
 {
 public:
+    virtual ~AudioSource() = default;
+
     virtual void writeSamples(float *buffer, std::size_t frames) = 0;
 
     static int sampleRate() { return 44100; }
