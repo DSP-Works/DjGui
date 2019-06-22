@@ -7,6 +7,12 @@ constexpr float doublePi() { return std::atan(1) * 4 * 2; }
 
 void AudioGenerator::writeSamples(float *buffer, std::size_t frames)
 {
+    if (!m_enabled)
+    {
+        std::fill(buffer, buffer + frames, 0.f);
+        return;
+    }
+
     const float stepSize = doublePi() / sampleRate() * m_frequency;
     int channelcounter { 0 };
     std::generate(buffer, buffer + frames, [&channelcounter,&pos=m_pos,stepSize](){
