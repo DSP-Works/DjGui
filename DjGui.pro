@@ -20,6 +20,7 @@ SOURCES += main.cpp \
     audiosource.cpp \
     audiovolumecontrol.cpp \
     databasemodel.cpp \
+    graphrenderer.cpp \
     streamdevice.cpp \
     widgets/browserwidget.cpp \
     widgets/controlknob.cpp \
@@ -27,7 +28,8 @@ SOURCES += main.cpp \
     widgets/decks/synthesizerdeck.cpp \
     widgets/decks/trackdeck.cpp \
     widgets/decktemplate.cpp \
-    widgets/mainwindow.cpp
+    widgets/mainwindow.cpp \
+    widgets/previewwidget.cpp
 
 HEADERS += \
     audiocrossmixer.h \
@@ -39,6 +41,7 @@ HEADERS += \
     audiosource.h \
     audiovolumecontrol.h \
     databasemodel.h \
+    graphrenderer.h \
     streamdevice.h \
     widgets/browserwidget.h \
     widgets/controlknob.h \
@@ -46,4 +49,5 @@ HEADERS += \
     widgets/decks/synthesizerdeck.h \
     widgets/decks/trackdeck.h \
     widgets/decktemplate.h \
-    widgets/mainwindow.h
+    widgets/mainwindow.h \
+    widgets/previewwidget.h

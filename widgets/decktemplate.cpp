@@ -12,7 +12,8 @@
 
 DeckTemplate::DeckTemplate(bool rightSide, QWidget *parent) :
     QFrame(parent),
-    m_volumeController(std::make_unique<AudioVolumeControl>()),
+    m_gainController(std::make_unique<AudioVolumeControl>()),
+    m_volumeController(std::make_unique<AudioVolumeControl>(m_gainController.get())),
     m_panController(std::make_unique<AudioVolumeControl>(m_volumeController.get()))
 {
     setFrameShape(QFrame::Box);
@@ -24,8 +25,9 @@ DeckTemplate::DeckTemplate(bool rightSide, QWidget *parent) :
     auto firstControlsLayout = new QVBoxLayout;
     firstControlsLayout->setMargin(0);
 
-    m_gainDial = new ControlKnob(tr("Gain"), 0, 100, 50);
+    m_gainDial = new ControlKnob(tr("Gain"), 50, 150, 100);
     connect(m_gainDial, &ControlKnob::valueChanged, this, &DeckTemplate::gainChanged);
+    connect(m_gainDial, &ControlKnob::valueChanged, this, [&controller=*m_gainController](int value){ controller.setVolume(float(value) / 100.f); });
     firstControlsLayout->addWidget(m_gainDial);
 
     m_filterDial = new ControlKnob(tr("Filter"), 0, 100, 50);
@@ -159,8 +161,8 @@ DeckTemplate::~DeckTemplate() = default;
 void DeckTemplate::writeSamples(float *buffer, std::size_t frames)
 {
     auto &source = deckAudioSource();
-    if (m_volumeController->audioSource() != &source)
-        m_volumeController->setAudioSource(&source);
+    if (m_gainController->audioSource() != &source)
+        m_gainController->setAudioSource(&source);
     m_panController->writeSamples(buffer, frames);
 }
 

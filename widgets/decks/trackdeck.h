@@ -5,12 +5,13 @@
 #include <memory>
 
 #include "widgets/decktemplate.h"
-#include "audioplayer.h"
 
 class QThread;
 class QProgressBar;
 
 class AudioDecoder;
+class AudioPlayer;
+class PreviewWidget;
 
 class TrackDeck : public DeckTemplate
 {
@@ -19,6 +20,10 @@ class TrackDeck : public DeckTemplate
 public:
     explicit TrackDeck(QThread &decodingThread, bool rightSide, QWidget *parent = nullptr);
     ~TrackDeck() override;
+
+signals:
+    void currentSampleChanged(double currentSample);
+    void bufferChanged();
 
 protected:
     AudioSource &deckAudioSource() override;
@@ -35,8 +40,10 @@ private:
     QThread &m_decodingThread;
     QProgressBar *m_progressBar;
     QSlider *m_slider;
+    QToolButton *m_playButton;
+    QToolButton *m_cueButton;
     std::unique_ptr<AudioDecoder> m_decoder;
-    AudioPlayer m_player;;
-
     QAudioBuffer m_buffer;
+    const std::unique_ptr<AudioPlayer> m_player;
+    PreviewWidget *m_previewWidget;
 };
