@@ -11,8 +11,6 @@
 #include <QFileSystemModel>
 #include <QStandardPaths>
 
-#include <QDebug>
-
 #include "databasemodel.h"
 
 BrowserWidget::BrowserWidget(QWidget *parent) :
@@ -47,6 +45,8 @@ BrowserWidget::BrowserWidget(QWidget *parent) :
 
         {
             auto treeView = new QTreeView;
+            treeView->setDragEnabled(true);
+
             auto model = new QFileSystemModel;
             model->setRootPath("");
             treeView->setModel(model);

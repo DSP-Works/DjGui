@@ -15,6 +15,11 @@ public:
 
     void writeSamples(float *buffer, std::size_t frames) override;
 
+protected:
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragLeaveEvent(QDragLeaveEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
+
 private:
     QLabel *m_label;
 };
