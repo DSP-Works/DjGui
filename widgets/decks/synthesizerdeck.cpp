@@ -7,8 +7,8 @@
 
 #include "audiogenerator.h"
 
-SynthesizerDeck::SynthesizerDeck(QWidget *parent) :
-    DeckTemplate(parent),
+SynthesizerDeck::SynthesizerDeck(bool rightSide, QWidget *parent) :
+    DeckTemplate(rightSide, parent),
     m_generator(std::make_unique<AudioGenerator>(1000, false))
 {
     setMinimumHeight(100);

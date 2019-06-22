@@ -13,7 +13,7 @@ class SynthesizerDeck : public DeckTemplate
     Q_OBJECT
 
 public:
-    explicit SynthesizerDeck(QWidget *parent = nullptr);
+    explicit SynthesizerDeck(bool rightSide, QWidget *parent = nullptr);
     ~SynthesizerDeck() override;
 
 protected:

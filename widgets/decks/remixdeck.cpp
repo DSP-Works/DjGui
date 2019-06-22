@@ -8,8 +8,8 @@
 
 #include "audiomixer.h"
 
-RemixDeck::RemixDeck(QWidget *parent) :
-    DeckTemplate(parent),
+RemixDeck::RemixDeck(bool rightSide, QWidget *parent) :
+    DeckTemplate(rightSide, parent),
     m_mixer(std::make_unique<AudioMixer>())
 {
     setMinimumHeight(100);

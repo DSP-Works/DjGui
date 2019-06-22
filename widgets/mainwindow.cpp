@@ -74,25 +74,25 @@ MainWindow::MainWindow(QWidget *parent) :
         auto gridLayout = new QGridLayout;
 
         {
-            auto trackDeck = new TrackDeck(m_decodingThread);
+            auto trackDeck = new TrackDeck(m_decodingThread, false);
             m_mixer->addLeftInput(*trackDeck);
             gridLayout->addWidget(trackDeck, 0, 0);
         }
 
         {
-            auto trackDeck = new TrackDeck(m_decodingThread);
+            auto trackDeck = new TrackDeck(m_decodingThread, true);
             m_mixer->addRightInput(*trackDeck);
             gridLayout->addWidget(trackDeck, 0, 1);
         }
 
         {
-            auto remixDeck = new RemixDeck;
+            auto remixDeck = new RemixDeck(false);
             m_mixer->addLeftInput(*remixDeck);
             gridLayout->addWidget(remixDeck, 1, 0);
         }
 
         {
-            auto synthesizerDeck = new SynthesizerDeck;
+            auto synthesizerDeck = new SynthesizerDeck(true);
             m_mixer->addRightInput(*synthesizerDeck);
             gridLayout->addWidget(synthesizerDeck, 1, 1);
         }

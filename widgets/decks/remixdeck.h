@@ -11,7 +11,7 @@ class RemixDeck : public DeckTemplate
     Q_OBJECT
 
 public:
-    explicit RemixDeck(QWidget *parent = nullptr);
+    explicit RemixDeck(bool rightSide, QWidget *parent = nullptr);
     ~RemixDeck() override;
 
 protected:

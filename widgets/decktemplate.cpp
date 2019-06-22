@@ -10,7 +10,7 @@
 #include "audiovolumecontrol.h"
 #include "controlknob.h"
 
-DeckTemplate::DeckTemplate(QWidget *parent) :
+DeckTemplate::DeckTemplate(bool rightSide, QWidget *parent) :
     QFrame(parent),
     m_volumeController(std::make_unique<AudioVolumeControl>())
 {
@@ -19,108 +19,123 @@ DeckTemplate::DeckTemplate(QWidget *parent) :
     m_layout = new QHBoxLayout;
 
     m_centralWidget = new QWidget;
-    m_layout->addWidget(m_centralWidget, 1);
+
+    auto firstControlsLayout = new QVBoxLayout;
+    firstControlsLayout->setMargin(0);
+
+    m_gainDial = new ControlKnob(tr("Gain"), 0, 100, 50);
+    connect(m_gainDial, &ControlKnob::valueChanged, this, &DeckTemplate::gainChanged);
+    firstControlsLayout->addWidget(m_gainDial);
+
+    m_filterDial = new ControlKnob(tr("Filter"), 0, 100, 50);
+    connect(m_filterDial, &ControlKnob::valueChanged, this, &DeckTemplate::filterChanged);
+    firstControlsLayout->addWidget(m_filterDial);
 
     {
-        auto vboxLayout = new QVBoxLayout;
-        vboxLayout->setMargin(0);
-
-        m_gainDial = new ControlKnob;
-        m_gainDial->setText(tr("Gain"));
-        vboxLayout->addWidget(m_gainDial);
-
-        m_filterDial = new ControlKnob;
-        m_filterDial->setText(tr("Filter"));
-        vboxLayout->addWidget(m_filterDial);
-
-        {
-            auto fxLayout = new QVBoxLayout;
-            fxLayout->setMargin(0);
-            fxLayout->setSpacing(0);
-
-            {
-                auto hboxLayuot = new QHBoxLayout;
-
-                m_fx1Button = new QToolButton;
-                m_fx1Button->setText(tr("1"));
-                m_fx1Button->setCheckable(true);
-                hboxLayuot->addWidget(m_fx1Button);
-
-                m_fx2Button = new QToolButton;
-                m_fx2Button->setText(tr("2"));
-                m_fx2Button->setCheckable(true);
-                hboxLayuot->addWidget(m_fx2Button);
-
-                fxLayout->addLayout(hboxLayuot);
-            }
-
-            {
-                auto label = new QLabel(tr("FX"));
-                label->setAlignment(Qt::AlignCenter);
-                fxLayout->addWidget(label);
-            }
-
-            vboxLayout->addLayout(fxLayout);
-        }
-
-        m_keyDial = new ControlKnob;
-        m_keyDial->setText(tr("Key"));
-        vboxLayout->addWidget(m_keyDial);
+        auto fxLayout = new QVBoxLayout;
+        fxLayout->setMargin(0);
+        fxLayout->setSpacing(0);
 
         {
             auto hboxLayuot = new QHBoxLayout;
 
-            hboxLayuot->addStretch();
+            m_fx1Button = new QToolButton;
+            m_fx1Button->setText(tr("1"));
+            m_fx1Button->setCheckable(true);
+            connect(m_fx1Button, &QAbstractButton::toggled, this, &DeckTemplate::fx1Changed);
+            hboxLayuot->addWidget(m_fx1Button);
 
-            m_monitorButton = new QToolButton;
-            m_monitorButton->setText(tr("🎧"));
-            hboxLayuot->addWidget(m_monitorButton);
+            m_fx2Button = new QToolButton;
+            m_fx2Button->setText(tr("2"));
+            m_fx2Button->setCheckable(true);
+            connect(m_fx2Button, &QAbstractButton::toggled, this, &DeckTemplate::fx2Changed);
+            hboxLayuot->addWidget(m_fx2Button);
 
-            hboxLayuot->addStretch();
-
-            vboxLayout->addLayout(hboxLayuot);
+            fxLayout->addLayout(hboxLayuot);
         }
-
-        m_panDial = new ControlKnob;
-        m_panDial->setText(tr("Pan"));
-        vboxLayout->addWidget(m_panDial);
-
-        m_layout->addLayout(vboxLayout);
-    }
-
-    {
-        auto vboxLayout = new QVBoxLayout;
-        vboxLayout->setMargin(0);
-
-        m_hiDial = new ControlKnob;
-        m_hiDial->setText(tr("Hi"));
-        vboxLayout->addWidget(m_hiDial);
-
-        m_midDial = new ControlKnob;
-        m_midDial->setText(tr("Mid"));
-        vboxLayout->addWidget(m_midDial);
-
-        m_lowDial = new ControlKnob;
-        m_lowDial->setText(tr("Low"));
-        vboxLayout->addWidget(m_lowDial);
 
         {
-            auto hboxLayout = new QHBoxLayout;
-
-            hboxLayout->addStretch();
-
-            m_volumeSlider = new QSlider(Qt::Vertical);
-            m_volumeSlider->setRange(0, 100);
-            m_volumeSlider->setValue(100);
-            connect(m_volumeSlider, &QSlider::valueChanged, this, [&controller=*m_volumeController](int value){ controller.setVolume(float(value) / 100.f); });
-            hboxLayout->addWidget(m_volumeSlider);
-
-            hboxLayout->addStretch();
-
-            vboxLayout->addLayout(hboxLayout, 1);
+            auto label = new QLabel(tr("FX"));
+            label->setAlignment(Qt::AlignCenter);
+            fxLayout->addWidget(label);
         }
 
-        m_layout->addLayout(vboxLayout);
+        firstControlsLayout->addLayout(fxLayout);
+    }
+
+    m_keyDial = new ControlKnob(tr("Key"), 0, 100, 50);
+    connect(m_keyDial, &ControlKnob::valueChanged, this, &DeckTemplate::keyChanged);
+    firstControlsLayout->addWidget(m_keyDial);
+
+    {
+        auto hboxLayuot = new QHBoxLayout;
+
+        hboxLayuot->addStretch();
+
+        m_monitorButton = new QToolButton;
+        m_monitorButton->setText(tr("🎧"));
+        m_monitorButton->setCheckable(true);
+        connect(m_monitorButton, &QAbstractButton::toggled, this, &DeckTemplate::monitorChanged);
+        hboxLayuot->addWidget(m_monitorButton);
+
+        hboxLayuot->addStretch();
+
+        firstControlsLayout->addLayout(hboxLayuot);
+    }
+
+    m_panDial = new ControlKnob(tr("Pan"), 0, 100, 50);
+    connect(m_panDial, &ControlKnob::valueChanged, this, &DeckTemplate::panChanged);
+    firstControlsLayout->addWidget(m_panDial);
+
+    auto secondControlsLayout = new QVBoxLayout;
+    secondControlsLayout->setMargin(0);
+
+    m_hiDial = new ControlKnob(tr("Hi"), 0, 100, 50);
+    connect(m_hiDial, &ControlKnob::valueChanged, this, &DeckTemplate::hiChanged);
+    secondControlsLayout->addWidget(m_hiDial);
+
+    m_midDial = new ControlKnob(tr("Mid"), 0, 100, 50);
+    connect(m_midDial, &ControlKnob::valueChanged, this, &DeckTemplate::midChanged);
+    secondControlsLayout->addWidget(m_midDial);
+
+    m_lowDial = new ControlKnob(tr("Low"), 0, 100, 50);
+    connect(m_lowDial, &ControlKnob::valueChanged, this, &DeckTemplate::lowChanged);
+    secondControlsLayout->addWidget(m_lowDial);
+
+    {
+        auto hboxLayout = new QHBoxLayout;
+
+        hboxLayout->addStretch();
+
+        m_volumeSlider = new QSlider(Qt::Vertical);
+        m_volumeSlider->setRange(0, 100);
+        m_volumeSlider->setValue(100);
+        connect(m_volumeSlider, &QAbstractSlider::valueChanged, this, [&controller=*m_volumeController](int value){ controller.setVolume(float(value) / 100.f); });
+        connect(m_volumeSlider, &QAbstractSlider::valueChanged, this, &DeckTemplate::volumeChanged);
+        hboxLayout->addWidget(m_volumeSlider);
+
+        hboxLayout->addStretch();
+
+        secondControlsLayout->addLayout(hboxLayout, 1);
+    }
+
+    auto controlsLayout = new QHBoxLayout;
+    controlsLayout->setMargin(0);
+
+    if (rightSide)
+    {
+        controlsLayout->addLayout(secondControlsLayout);
+        controlsLayout->addLayout(firstControlsLayout);
+        m_layout->addLayout(controlsLayout);
+    }
+
+    m_layout->addWidget(m_centralWidget, 1);
+
+    if (!rightSide)
+    {
+        controlsLayout->addLayout(firstControlsLayout);
+        controlsLayout->addLayout(secondControlsLayout);
+        m_layout->addLayout(controlsLayout);
     }
 
     setLayout(m_layout);
@@ -134,6 +149,116 @@ void DeckTemplate::writeSamples(float *buffer, std::size_t frames)
     if (m_volumeController->audioSource() != &source)
         m_volumeController->setAudioSource(&source);
     m_volumeController->writeSamples(buffer, frames);
+}
+
+int DeckTemplate::gain() const
+{
+    return m_gainDial->value();
+}
+
+void DeckTemplate::setGain(int gain)
+{
+    m_gainDial->setValue(gain);
+}
+
+int DeckTemplate::filter() const
+{
+    return m_filterDial->value();
+}
+
+void DeckTemplate::setFilter(int filter)
+{
+    m_filterDial->setValue(filter);
+}
+
+bool DeckTemplate::fx1() const
+{
+    return m_fx1Button->isChecked();
+}
+
+void DeckTemplate::setFx1(bool fx1)
+{
+    m_fx1Button->setChecked(fx1);
+}
+
+bool DeckTemplate::fx2() const
+{
+    return m_fx2Button->isChecked();
+}
+
+void DeckTemplate::setFx2(bool fx2)
+{
+    m_fx2Button->setChecked(fx2);
+}
+
+int DeckTemplate::key() const
+{
+    return m_keyDial->value();
+}
+
+void DeckTemplate::setKey(int key)
+{
+    m_keyDial->setValue(key);
+}
+
+bool DeckTemplate::monitor() const
+{
+    return m_monitorButton->isChecked();
+}
+
+void DeckTemplate::setMonitor(bool monitor)
+{
+    m_monitorButton->setChecked(monitor);
+}
+
+int DeckTemplate::pan() const
+{
+    return m_panDial->value();
+}
+
+void DeckTemplate::setPan(int pan)
+{
+    m_panDial->setValue(pan);
+}
+
+int DeckTemplate::hi() const
+{
+    return m_hiDial->value();
+}
+
+void DeckTemplate::setHi(int hi)
+{
+    m_hiDial->setValue(hi);
+}
+
+int DeckTemplate::mid() const
+{
+    return m_midDial->value();
+}
+
+void DeckTemplate::setMid(int mid)
+{
+    m_midDial->setValue(mid);
+}
+
+int DeckTemplate::low() const
+{
+    return m_lowDial->value();
+}
+
+void DeckTemplate::setLow(int low)
+{
+    m_lowDial->setValue(low);
+}
+
+int DeckTemplate::volume() const
+{
+    return m_volumeSlider->value();
+}
+
+void DeckTemplate::setVolume(int volume)
+{
+    m_volumeSlider->setValue(volume);
 }
 
 void DeckTemplate::setCentralWidget(QWidget *widget)

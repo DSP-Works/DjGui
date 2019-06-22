@@ -17,7 +17,7 @@ class TrackDeck : public DeckTemplate
     Q_OBJECT
 
 public:
-    explicit TrackDeck(QThread &decodingThread, QWidget *parent = nullptr);
+    explicit TrackDeck(QThread &decodingThread, bool rightSide, QWidget *parent = nullptr);
     ~TrackDeck() override;
 
 protected:

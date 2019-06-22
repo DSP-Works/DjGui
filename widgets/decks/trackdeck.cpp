@@ -16,8 +16,8 @@
 #include "audiodecoder.h"
 #include "audioplayer.h"
 
-TrackDeck::TrackDeck(QThread &decodingThread, QWidget *parent) :
-    DeckTemplate(parent),
+TrackDeck::TrackDeck(QThread &decodingThread, bool rightSide, QWidget *parent) :
+    DeckTemplate(rightSide, parent),
     m_decodingThread(decodingThread)
 {
     setAcceptDrops(true);
@@ -164,6 +164,7 @@ void TrackDeck::progress(int progress, int total)
 void TrackDeck::decodingFinished()
 {
     m_player.setAudioBuffer(m_decoder->takeBuffer());
+    m_player.setPosition(0);
     m_player.setPlaying(true);
 
     m_slider->setVisible(true);
